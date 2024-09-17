@@ -49,14 +49,14 @@ void SeeCore::InitialiseParameters() {
   see_opt_oct_ptr_->setResolution(see_.r);
 
   if (ComputeK(see_)) {
-    //cout << ("k: " << see_.k << " r: " << see_.r << " d: " << see_.d
-    //                      << " tau: " << see_.tau << " psi: " << see_.psi
-    //                      << " ups: " << see_.ups << " rho: " << see_.rho
-    //                      << " eps: " << see_.eps);
+    cout << "k: " << see_.k << " r: " << see_.r << " d: " << see_.d
+                          << " tau: " << see_.tau << " psi: " << see_.psi
+                          << " ups: " << see_.ups << " rho: " << see_.rho
+                          << " eps: " << see_.eps << std::endl;
     done_ = false;
   } else {
-    //ROS_ERROR_STREAM("k < 3, set rho > " << std::setprecision(3) << see_.rho
-    //                                     << " or r > " << see_.r);
+    std::cout << "k < 3, set rho > " << std::setprecision(3) << see_.rho
+                                         << " or r > " << see_.r << std::endl;
     done_ = true;
   }
 }
@@ -79,11 +79,11 @@ void SeeCore::UpdatePointCloud(SeePointCloudPtr see_pt_dash_ptr, SeeView &v_p) {
   v_num_++;
 
   see_pt_ptr_->header.seq = v_num_;
-  cout << "View " << v_num_;
+  cout << "View " << v_num_ <<std::endl;
   ApplyHPR(see_pt_dash_ptr);
 
   if (!see_pt_ptr_->size() && !see_pt_dash_ptr->size()) {
-    cout << ("No points visible, choose a different initial view");
+    cout << "No points visible, choose a different initial view" << std::endl;
     done_ = true;
     return;
   } else {
@@ -91,7 +91,7 @@ void SeeCore::UpdatePointCloud(SeePointCloudPtr see_pt_dash_ptr, SeeView &v_p) {
   }
 
   if (CheckFrontierPoint(f_idx_)) {
-    cout << ("Applying View Controller");
+    cout << ("Applying View Controller")<<std::endl;
     ViewController(see_pt_dash_ptr);
   }
 
@@ -100,7 +100,7 @@ void SeeCore::UpdatePointCloud(SeePointCloudPtr see_pt_dash_ptr, SeeView &v_p) {
   for (size_t i = 0; i < N_idx.size(); i++) {
     opt_views += UpdateView(N_idx[i]);
   }
-  cout << "Optimised " << opt_views << " views";
+  cout << "Optimised " << opt_views << " views" << std::endl;
 
   UpdateViewOctree();
   see_vw_oct_ptr_->nearestKSearch(c_v_, see_.tau, N_idx, N_dst);
@@ -108,7 +108,7 @@ void SeeCore::UpdatePointCloud(SeePointCloudPtr see_pt_dash_ptr, SeeView &v_p) {
     UpdateViewGraph(N_idx[i]);
     gph_views++;
   }
-  cout << "Graphed " << gph_views << " views";
+  cout << "Graphed " << gph_views << " views" << std::endl;
 
   SelectNBV();
 }
@@ -152,7 +152,7 @@ void SeeCore::ProcessNewPointCloud(SeePointCloudPtr see_pt_dash_ptr) {
   omp_init_lock(&outlier_lock_);
   omp_init_lock(&frontier_lock_);
 
-  cout << "Classifying " << new_count << " new points";
+  cout << "Classifying " << new_count << " new points" << std::endl;
 #pragma omp parallel for
   for (size_t i = start_idx; i < see_pt_ptr_->size(); i++) {
     if (ProcessPoint(i)) {
@@ -162,7 +162,7 @@ void SeeCore::ProcessNewPointCloud(SeePointCloudPtr see_pt_dash_ptr) {
   }
   r_num_ = R_idx.size();
 
-  cout << "Reclassifying " << R_idx.size() << " existing points";
+  cout << "Reclassifying " << R_idx.size() << " existing points" << std::endl;
 #pragma omp parallel for
   for (size_t i = 0; i < R_idx.size(); i++) {
     ProcessPoint(R_idx[i]);
@@ -173,9 +173,9 @@ void SeeCore::ProcessNewPointCloud(SeePointCloudPtr see_pt_dash_ptr) {
   omp_destroy_lock(&outlier_lock_);
   omp_destroy_lock(&frontier_lock_);
 
-  cout << "Core points: " << C_->size();
-  cout << "Frontier points: " << F_->size();
-  cout << "Outlier points: " << O_->size();
+  cout << "Core points: " << C_->size() << std::endl;
+  cout << "Frontier points: " << F_->size() << std::endl;
+  cout << "Outlier points: " << O_->size() << std::endl;
 }
 
 //! Initialise containers for new points
@@ -724,7 +724,7 @@ void SeeCore::ViewController(SeePointCloudPtr see_pt_dash_ptr) {
   f_d = R.transpose() * (f.getVector3fMap() - centroid.head(3));
 
   if (!see_pt_dash_ptr->size() || !r_num_) {
-    cout << ("Freeing point");
+    cout << ("Freeing point") << std::endl;
     RemoveFrontierPoint(f_idx_);
     AddOutlierPoint(f_idx_);
   } else if (f_d.norm() < vw_ctrl_.distance[f_idx_]) {
@@ -748,13 +748,13 @@ void SeeCore::ViewController(SeePointCloudPtr see_pt_dash_ptr) {
     vw_ctrl_.scale[f_idx_] *= 2;
     vw_ctrl_.distance[f_idx_] = f_d.norm();
 
-    cout << ("Adjusting view");
+    cout << ("Adjusting view") << std::endl;
     AdjustView(f_idx_, v_p);
   } else if (vw_ctrl_.switched[f_idx_]) {
-      cout << ("Switching view");
+      cout << ("Switching view") << std::endl;
     SwitchView(f_idx_);
   } else {
-      cout << ("Freeing point");
+      cout << ("Freeing point") << std::endl;
     RemoveFrontierPoint(f_idx_);
     AddOutlierPoint(f_idx_);
   }
@@ -887,7 +887,7 @@ void SeeCore::SelectNBVFromGraph() {
     f_idx_ = (*see_vw_map_ptr_)[nbv];
   }
 
-  cout << "Selected view can observe " << nbv_arcs + 1 << " frontiers";
+  cout << "Selected view can observe " << nbv_arcs + 1 << " frontiers" << std::endl;
 }
 
 //! Get the SEE algorithm parameters

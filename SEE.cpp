@@ -1,6 +1,8 @@
 #include "see_core/inc/see_core.h"
 //#include "see_common/inc/common_structs.h"
 
+#include <pcl/io/pcd_io.h>
+
 using namespace ori::see::core;
 
 void LoadSeeParams(SeeParams& see) {
@@ -28,6 +30,14 @@ bool ReachedNBV(SeeView view, SeeView nbv, NBVParams nbv_p, bool& first_view) {
 	return dst_off < nbv_p.dst_thres && (ort_off * 180 / M_PI) < nbv_p.ort_thres;
 }
 
+void print_view(SeeView &view) {
+	for (int i = 0; i < 4; i++)
+		cout << view.data[i] << " ";
+	for (int i = 0; i < 3; i++)
+		cout << view.view[i] << " ";
+	std::cout << "\n";
+}
+
 int main(int argc, char* argv[])
 {
 	SeeView nbv, view;
@@ -44,18 +54,29 @@ int main(int argc, char* argv[])
 
 	while (!core->IsDone()) {
 		SeePointCloudPtr cloud(new pcl::PointCloud<SeePoint>);
-		
+
+		if (pcl::io::loadPCDFile<SeePoint>("test.pcd", *cloud) == -1)
+		{
+			PCL_ERROR("Couldn't read file your_point_cloud.pcd\n");
+			return -1;
+		}
 		// obtain current point cloud
 		//cloud = getViewandCloud(cloud_out, view);
+		view.x = -1.25516047;
+		view.y = 0.16405614;
+		view.z = 0.90033961;
+		view.view_x = 0.81845733;
+		view.view_y = -0.11847473;
+		view.view_z = -0.56222001;
+
+		print_view(view);
 
 		// process the point cloud
 		core->UpdatePointCloud(cloud, view);
 
 		nbv = core->GetNBV();
-		for (int i = 0; i < 4; i++)
-			cout << nbv.data[i] << " ";
-		for (int i = 0; i < 3; i++)
-			cout << nbv.view[i] << " ";
+		
+		print_view(nbv);
 	}
 
 	return 0;
