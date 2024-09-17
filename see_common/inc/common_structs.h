@@ -53,7 +53,7 @@ struct SensorParams {
   float fov_x; /*!< Field of view (degrees) on the x-axis */
   float fov_y; /*!< Field of view (degrees) on the y-axis */
   float noise; /*!< Std dev of noise on point observations (sim only) */
-  //std::string sensor_frame;  /*!< Frame for sensor */
+  std::string sensor_frame;  /*!< Frame for sensor */
   std::string world_frame;   /*!< World frame for the sensor */
   std::vector<float> bounds; /*!< Bounding box for scene */
 };

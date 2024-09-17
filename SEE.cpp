@@ -5,6 +5,19 @@
 
 using namespace ori::see::core;
 
+void LoadSensorParams(SensorParams& sensor) {
+	sensor.fps = 30;
+	sensor.f_axis = 2;
+	sensor.pix_x = 848;
+	sensor.pix_y = 480;
+	sensor.fov_x = 69.4f;
+	sensor.fov_y = 42.5f;
+	sensor.noise = 0.01f;
+	sensor.sensor_frame = "sensor";
+	sensor.world_frame = "world";
+	sensor.bounds = std::vector<float>();
+}
+
 void LoadSeeParams(SeeParams& see) {
 	see.tau = 100;
 	see.rho = 1000000;
@@ -46,13 +59,13 @@ int main(int argc, char* argv[])
 	SensorParams sensor_params;
 
 	LoadSeeParams(see_params);
+	LoadSensorParams(sensor_params);
 
 	AbstractCoreSPtr core(new SeeCore(see_params, sensor_params));
 
 	bool first_view = true;
 	int cloud_num = 0;
 
-	while (!core->IsDone()) {
 		SeePointCloudPtr cloud(new pcl::PointCloud<SeePoint>);
 
 		if (pcl::io::loadPCDFile<SeePoint>("test.pcd", *cloud) == -1)
@@ -73,11 +86,10 @@ int main(int argc, char* argv[])
 
 		// process the point cloud
 		core->UpdatePointCloud(cloud, view);
-
+		cout << "cloud size:" << cloud->size() << endl;
 		nbv = core->GetNBV();
 		
 		print_view(nbv);
-	}
 
 	return 0;
 }
