@@ -72,6 +72,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)\3rdPatry\lemon\include;$(ProjectDir)\3rdPatry\spdlog\include;$(ProjectDir)\3rdPatry\;$(ProjectDir);$(EIGEN);$(PCL);$(BOOST);$(FLANN);$(QHULL);$(VTK);$(NLOPT)\include</ExternalIncludePath>
+    <ExecutablePath>$(NLOPT)\bin;$(ExecutablePath)</ExecutablePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

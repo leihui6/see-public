@@ -24,7 +24,7 @@ SeeCore::SeeCore(SeeParams see, SensorParams sensor)
       see_spt_oct_ptr_(new SeePointOctree(see.ups)) {
 
   InitialiseParameters();
-  see_pt_ptr_->header.frame_id = sensor_.world_frame;
+  //see_pt_ptr_->header.frame_id = sensor_.world_frame;
   see_vw_oct_ptr_->setInputCloud(see_vw_ptr_);
   see_apt_oct_ptr_->setInputCloud(see_pt_ptr_);
   see_cpt_oct_ptr_->setInputCloud(see_pt_ptr_, C_);
