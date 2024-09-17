@@ -33,8 +33,8 @@ scene observations.
 ## Dependencies
 - ROS
 - PCL
-- NLOPT
-- Lemon
+- [NLOPT](https://github.com/stevengj/nlopt) 
+- [Lemon](https://github.com/seqan/lemon)
 
 ## Project Owners
 
