@@ -29,8 +29,6 @@
 #include <lemon/connectivity.h>
 #include <lemon/list_graph.h>
 
-#include <custom_info/custom_info.hpp>
-
 #include "see_common/inc/abstract_core.h"
 #include "see_common/inc/common_structs.h"
 

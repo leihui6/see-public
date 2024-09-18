@@ -1,0 +1,21 @@
+{
+    "sensor": {
+      "fps": 30,
+      "f_axis": 2,
+      "pix_x": 1000,
+      "pix_y": 1000,
+      "fov_x": 70,
+      "fov_y": 70,
+      "noise": 0.01,
+      "sensor_frame": "sensor",
+      "world_frame": "world"
+    },
+    "see": {
+      "rho": 490738,
+      "r": 0.03,
+      "d": 1.5,
+      "psi": 0.5,
+      "tau": 100,
+      "ups": 0.01
+    }
+  }
