@@ -6,14 +6,8 @@
 using json = nlohmann::json;
 using namespace ori::see::core;
 
-#ifdef SEE_EXPORTS
-#define SEE_API __declspec(dllexport)
-#else
-#define SEE_API __declspec(dllimport)
-#endif
 
-
-class SEE_API SEE
+class SEE
 {
 public:
     SEE(std::string config_filename);
