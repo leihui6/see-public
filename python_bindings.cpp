@@ -33,9 +33,9 @@ PYBIND11_MODULE(pysee, m) {
 
     py::class_<SEE>(m, "SEE")
         .def(py::init<std::string>(), "Initialize a SEE instance with a configuration file")
-        .def("search_nbv_once", [](SEE& self, const py::list& cloud, const py::list& current_v, py::list next_v) {
-        if (py::len(current_v) != 6 || py::len(next_v) != 6) {
-            throw py::value_error("current_v and next_v must be lists of 6 floats");
+        .def("search_nbv_once", [](SEE& self, const py::list& cloud, const py::list& current_v) {
+        if(py::len(current_v) != 6) {
+            throw py::value_error("current_v must be a list of 6 floats");
         }
         SeePointCloudPtr cpp_cloud = py_list_to_point_cloud(cloud);
         SeeView cpp_current_v;
@@ -52,14 +52,11 @@ PYBIND11_MODULE(pysee, m) {
         catch (const std::exception& e) {
             throw std::runtime_error(std::string("SEE error: ") + e.what());
         }
-        // Update the next_v list in-place
-        next_v[0] = cpp_next_v.x;
-        next_v[1] = cpp_next_v.y;
-        next_v[2] = cpp_next_v.z;
-        next_v[3] = cpp_next_v.view_x;
-        next_v[4] = cpp_next_v.view_y;
-        next_v[5] = cpp_next_v.view_z;
-            }, "Perform a single NBV search and update the next_v list in-place");
+		//std::cout << cpp_next_v.x << " " << cpp_next_v.y << " " << cpp_next_v.z << " " << cpp_next_v.view_x << " " << cpp_next_v.view_y << " " << cpp_next_v.view_z << std::endl;
+        // Return next_v as a Python list
+        return py::make_tuple(cpp_next_v.x, cpp_next_v.y, cpp_next_v.z,
+            cpp_next_v.view_x, cpp_next_v.view_y, cpp_next_v.view_z);
+            }, "Perform a single NBV search and return the next_v as a tuple");
 
     m.def("init", [](const std::string& config_filename) {
         return SEE(config_filename);
